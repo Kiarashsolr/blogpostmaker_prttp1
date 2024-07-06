@@ -13,7 +13,7 @@ APP_PASSCODE = os.getenv('APP_PASSCODE')
 # Function to generate skeleton/summary of the blogpost using OpenAI API
 def generate_skeleton(field_of_work, example_posts):
     try:
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
                 {
@@ -45,14 +45,14 @@ def generate_skeleton(field_of_work, example_posts):
             frequency_penalty=0,
             presence_penalty=0
         )
-        return response.choices[0].message['content']
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error: {e}"
 
 # Function to generate the raw blogpost from skeleton/summary
 def makeRawBlogpost(skeleton):
     try:
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
                 {
@@ -83,7 +83,7 @@ def makeRawBlogpost(skeleton):
             frequency_penalty=0,
             presence_penalty=0
         )
-        return response.choices[0].message['content']
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error: {e}"
 
@@ -91,7 +91,7 @@ def makeRawBlogpost(skeleton):
 def generate_joe_guay_blogpost(skeleton):
     try:
         raw_blogpost = makeRawBlogpost(skeleton)
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="ft:gpt-3.5-turbo-0125:vdidopenai:author-style-joe:9hjTUH3a",
             messages=[
                 {
@@ -105,13 +105,13 @@ def generate_joe_guay_blogpost(skeleton):
                     "content": raw_blogpost
                 }
             ],
-            temperature=1,
+            temperature=0.95,
             max_tokens=2048,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
         )
-        return response.choices[0].message['content']
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error: {e}"
 
@@ -119,7 +119,7 @@ def generate_joe_guay_blogpost(skeleton):
 def generate_shankar_narayan_blogpost(skeleton):
     try:
         raw_blogpost = makeRawBlogpost(skeleton)
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="ft:gpt-3.5-turbo-0125:vdidopenai:author-style-shank:9hjAJh7P",
             messages=[
                 {
@@ -133,13 +133,13 @@ def generate_shankar_narayan_blogpost(skeleton):
                     "content": raw_blogpost
                 }
             ],
-            temperature=1,
+            temperature=0.95,
             max_tokens=2048,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
         )
-        return response.choices[0].message['content']
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error: {e}"
 
@@ -199,7 +199,7 @@ def main():
                 blogpost = generate_shankar_narayan_blogpost(skeleton)
             elif tone == "AI written":
                 blogpost = generate_ai_written_blogpost(skeleton)
-            
+
             st.session_state.blogpost = blogpost
 
     # Show the final blogpost if it has been generated
